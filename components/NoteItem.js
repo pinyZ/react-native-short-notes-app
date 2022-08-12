@@ -10,10 +10,14 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 
 const win = Dimensions.get("window");
 
-export default function NoteItem({ item }) {
+export default function NoteItem({ item, setData }) {
   return (
     <View style={styles.container}>
-      <TouchableOpacity>
+      <TouchableOpacity
+        onPress={() =>
+          setData((prev) => prev.filter((data) => data.key != item.key))
+        }
+      >
         <View style={styles.flex}>
           <Text>{item.noteTitle}</Text>
           <Ionicons name="trash" size={20} />
@@ -29,7 +33,6 @@ const styles = StyleSheet.create({
     width: win.width - 20,
     padding: 10,
     margin: 10,
-    marginTop: 70,
     borderRadius: 10,
     borderColor: "#0e132b",
     borderWidth: 1,
