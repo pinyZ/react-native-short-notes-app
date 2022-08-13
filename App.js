@@ -9,10 +9,11 @@ import {
   TextInput,
   Alert,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Dimensions } from "react-native";
 import NoteItem from "./components/NoteItem";
 import Modal from "react-native-modal";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const win = Dimensions.get("window");
 
@@ -21,6 +22,10 @@ export default function App() {
   const [isModalVisible, setModalVisible] = useState(false);
   const [title, setTitle] = useState("");
   const [desc, setDesc] = useState("");
+
+  useEffect(() => {
+    getData();
+  }, []);
 
   const handleSubmit = () => {
     if (title.length < 3 || desc.length < 3) {
@@ -43,6 +48,26 @@ export default function App() {
       setDesc("");
     }
   };
+  const getData = async () => {
+    try {
+      let data = await AsyncStorage.getItem("savedNotes");
+      if (data !== null) {
+        setData(JSON.parse(data));
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  useEffect(() => {
+    storeData();
+  }, [data]);
+  const storeData = async () => {
+    try {
+      await AsyncStorage.setItem("savedNotes", JSON.stringify(data));
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
@@ -56,13 +81,15 @@ export default function App() {
       </View>
       <FlatList
         data={data}
-        renderItem={({ item }) => <NoteItem item={item} setData={setData} />}
+        renderItem={({ item }) => (
+          <NoteItem item={item} setData={setData} data={data} />
+        )}
       />
       <Pressable style={styles.bottomBar} onPress={toggleModal}>
         <Text style={styles.plus}>+</Text>
       </Pressable>
       <Modal isVisible={isModalVisible}>
-        <View style={{ flex: 1 }}>
+        <View style={{ flex: 1, justifyContent: "center" }}>
           <Text style={styles.titleText}>Create a Short Note</Text>
           <TextInput
             placeholder="Note Title"
