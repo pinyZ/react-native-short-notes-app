@@ -105,8 +105,8 @@ export default function App() {
             style={styles.inputField}
           />
           <View style={styles.buttonContainer}>
-            <Button title="Add Note" onPress={handleSubmit} color="#0e132b" />
             <Button title="Cancel" onPress={toggleModal} color="#0e132b" />
+            <Button title="Add Note" onPress={handleSubmit} color="#0e132b" />
           </View>
         </View>
       </Modal>
